@@ -85,13 +85,14 @@ void test_victory_status(){
 }
 
 void test_player_round(){
-    int players = 5;
     card_t *deck = NULL;
     card_t *hand = NULL;
     create_deck(&deck, SIZE_DECK);
+    draw(&deck, &hand);
+    draw(&deck, &hand);
     player_play(&hand, &deck, 1);
     if(hand != NULL) return;
-    printf("test_player_round maybe passed.\n");
+    printf("test_player_round passed.\n");
 }
 
 int main() {
