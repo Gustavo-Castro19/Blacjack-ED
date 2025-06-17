@@ -1,6 +1,19 @@
-#include "deck.h"
 #ifndef GAME_H
 #define GAME_H
+#include "deck.h"
+
+typedef enum{
+LOSE=-1,
+DRAW,
+WIN,
+}g_state_t;
+
+typedef enum{
+  ACES=1,
+  JACKS=11,
+  QUEENS,
+  KINGS,
+}SPECIAL_RANKS;
 
 int identify(int rank);
 int calculate_point(card_t **stack);

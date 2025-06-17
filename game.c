@@ -4,11 +4,12 @@
 #include "game.h"
 
 int identify(int rank){
-    if(!rank){
+    if(rank<1){
         printf("Erro inesperado.\n");
         return -1;
     }
-    if(rank < 2){
+
+  if(rank==1){
         return 11;
     }else if(rank <= 10){
         return rank;
@@ -16,83 +17,75 @@ int identify(int rank){
         return 10;
     }
 }
+
 int calculate_point(card_t **stack){
-    if(!stack){
-        printf("stack is null.\n");
+    if(!stack || !*stack){
+        fprintf(stderr,"stack is null.\n");
         return -1;
     }
     card_t *current = *stack;
     int sum = 0;
     while(current != NULL){
-        sum = sum + identify(current->rank);
+        sum += identify(current->rank);
         current = current->next;
     }
     return sum;
 }
 
 int victory_status(card_t **stack){
-    if(!stack){
-        printf("Stack is null.\n");
+    if(!stack || !*stack){
+        fprintf(stderr,"Stack is null.\n");
         return -1;
-    }else if(!*stack){
-        printf("*stack is null.\n");
-        return -1;
-    }
+  }
     int result = calculate_point(stack);
-    if(result < 21) return 1;
-    else if(result == 21) return 0;
-    else return -1;
+    if(result < 21) return DRAW;
+    else if(result == 21) return WIN;
+    else return LOSE;
 }
 
 
 void printc_t(const card_t *card){
-    char *card_name;
-    if (card->rank == 1){
-        card_name = "As";
+    if(card->rank>1 && card->rank<=10){
+    printf("%d",card->rank);
+  }else{
+    switch(card->rank){
+      case(ACES):
+        printf("As");
+      case(JACKS):
+        printf("Duque");
+      case(QUEENS):
+        printf("Rainha");
+      case(KINGS):
+        printf("Rei");
+      default:
+        fprintf("RANK FORA DO ESCOPO-- ERRO INESPERADO");
+        return;
     }
-    else if (card->rank == 11){
-        card_name = "Valete";
-    }
-    else if (card->rank == 12){
-        card_name = "Dama";
-    }
-    else if (card->rank == 13){
-        card_name = "Rei";
-    }
-    else{
-        card_name = NULL;
-    }
-
-    if (card_name != NULL){
-        printf(" %s", card_name);
-    }
-    else{
-        printf(" %d", card->rank);
-    }
+  }
 
     switch (card->suit){
-    case 0:
+    case HEARTS:
         printf(" de Copas.\n");
         break;
-    case 1:
-        printf(" de Diamantes.\n");
+    case DIAMOND:
+        printf(" de Ouros.\n");
         break;
-    case 2:
+    case CLUBS:
         printf(" de Paus.\n");
         break;
-    case 3:
+    case SPADES:
         printf(" de Espadas.\n");
         break;
     default:
-        printf("Erro inesperado, valor da Enum: %d\n", card->suit);
-        break;
+        fprintf("Erro inesperado, valor da Enum invalido\n", card->suit);
+        return;
     }
 }
 
 void print_hand(card_t **hand){
     if(!hand){
-        printf("hand is null.\n");
-        return;
+        fprintf(stderr,"hand is null!.\n");
+        exit(EXIT_FAILURE);
     }
     if(!*hand){
         printf("Mao vazia!\n");
@@ -108,22 +101,26 @@ void print_hand(card_t **hand){
     }
 }
 
-void player_play(card_t **hand, card_t **deck, int player){
+void player_play(card_t *hand, card_t *deck, int player){
     if(!deck){
         printf("deck is null.\n");
-        return;
+        exit(EXIT_FAILURE);
     }
-    int key;
+    
+    int key=0;
     printf("\nJogador %d:\n", player);
     printf("============================================================\n");
     printf(" sacar - 0 | passar - 1 | ver cartas - 2 | sua pontucao - 3\n");
     printf("============================================================\n");
     printf("Resposta: ");
-    scanf("%d", &key);
+    if((scanf("%d", &key)!=1){
+    fprintf(stderr, "valor passado incorretamente, erro de leitura");
+  }
+  while(getchar()!='\n' || getchar()!=EOF );
 
     switch(key){
         case 0:
-            draw(deck, hand);
+            draw(&deck, &hand);
             printf("Carta sacada:");
             printc_t(*hand);
             break;
@@ -131,10 +128,10 @@ void player_play(card_t **hand, card_t **deck, int player){
             printf("Jogador %d, passou seu turno.\n", player);
             break;
         case 2:
-            print_hand(hand);
+            print_hand(&hand);
             break;
         case 3:
-            printf("Sua pontuacao atual eh: %d\n", calculate_point(hand));
+            printf("Sua pontuacao atual eh: %d\n", calculate_point(&hand));
             break;
         default:
             printf("Entrada invalida, tente novamente.\n");

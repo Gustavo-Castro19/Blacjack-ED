@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h> 
 #include <stdlib.h>
 #include "deck.h"
 
@@ -28,9 +28,9 @@ card_t *create_deck(card_t **deck, int size) {
     }
     for (int suit = HEARTS; suit <= CLUBS; suit++) {
         for (int rank = 1; rank <= 13; rank++) {
-            card_t *new_card = malloc(sizeof(card_t));
+            card_t *new_card = (card_t*)malloc(sizeof(card_t));
             if (!new_card) exit(EXIT_FAILURE);
-            new_card->suit = (nipe_t)suit;
+            new_card->suit = (naipe_t)suit;
             new_card->rank = rank;
             new_card->next = NULL;
             push(deck, new_card);
