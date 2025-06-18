@@ -2,15 +2,15 @@
 #define DECK_H
 #define SIZE_DECK 52
 
-typedef enum nipe_t{
+typedef enum {
   HEARTS=0,
   SPADES,
   DIAMOND,
   CLUBS,  
-}nipe_t;
+}naipe_t;
 
 typedef struct card_t{
-  nipe_t suit;
+  naipe_t suit;
   int rank;
   struct card_t *next;
 }card_t;
