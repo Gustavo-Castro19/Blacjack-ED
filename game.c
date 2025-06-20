@@ -4,6 +4,7 @@
 #include "deck.h"
 #include "game.h"
 
+
 int identify(int rank){
   if(rank<1){
     fprintf(stderr,"Rank da carta fora do escopo.\n");
@@ -107,57 +108,68 @@ void print_hand(card_t **hand){
 }
 
 void record_archive(card_t **players, int size) {
-    printf("Você quer salvar seu jogo?\nDigite 's' para sim ou 'n' para não: ");
+  while(1){
+  printf("Você quer salvar seu jogo?\nDigite 's' para sim ou 'n' para não:\nSe quiser ver as partidas anteriores digite 'h' ");
+  char option;
+  if (scanf("%c", &option) != 1) { 
+    fprintf(stderr, "Erro: caractere não foi lido corretamente.\n");
+    exit(EXIT_FAILURE);
+  }
+  while (getchar() != '\n'); 
 
-    char option;
-    while (getchar() != '\n'); 
-    if (scanf("%c", &option) != 1) { 
-        fprintf(stderr, "Erro: caractere não foi lido corretamente.\n");
+  switch (option) {
+    case 's':
+    case 'S': {
+      FILE *fd = fopen("scoring.txt", "a");
+      if (!fd) {
+        fprintf(stderr, "Erro: não foi possível abrir o arquivo para escrita.\n");
+        return;
+      }
+
+      char title[BUFFER];
+      printf("Qual será o nome do jogo que você quer salvar?\n> ");
+      if (!fgets(title, BUFFER, stdin)) {
+        fprintf(stderr, "Erro ao ler o nome do jogo.\n");
+        fclose(fd);
+        return;
+      }
+      size_t title_size=strlen(title);
+      if(title[title_size-1]=='\n') title[title_size-1] ='\0';
+      fprintf(fd, "=== Jogo: %s ===\n", title);
+      for (int i = 0; i < size; i++) {
+        int pontos = calculate_point(&players[i]);
+        fprintf(fd, "Jogador %d: %d pontos\n", i + 1, pontos);
+      }
+      fprintf(fd, "\n");
+
+      fclose(fd);
+      printf("Jogo salvo com sucesso em 'scoring.txt'.\n");
+      return;
+    }
+
+    case 'n':
+    case 'N':
+      printf("Ok, obrigado por jogar!\n");
+      return;
+    case 'h':
+    case 'H':{
+      FILE *fd=fopen("scoring.txt","r");
+      if(!fd){
+        fprintf(stderr,"o arquivo scoring nao pode ser aberto, verifique se ele esta integro e/ou existe\n");
         exit(EXIT_FAILURE);
+      }
+      static char line[BUFFER];
+      while(fgets(line,BUFFER,fd)){
+        printf("%s\n",line);
+      }
+      fclose(fd);
+      puts("fim do historico");
+      break;
     }
-    while (getchar() != '\n'); 
 
-    switch (option) {
-        case 's':
-        case 'S': {
-            FILE *fd = fopen("scoring.txt", "a");
-            if (!fd) {
-                fprintf(stderr, "Erro: não foi possível abrir o arquivo para escrita.\n");
-                return;
-            }
-
-            char title[64];
-            printf("Qual será o nome do jogo que você quer salvar?\n> ");
-            if (!fgets(title, sizeof(title), stdin)) {
-                fprintf(stderr, "Erro ao ler o nome do jogo.\n");
-                fclose(fd);
-                return;
-            }
-
-            size_t len = strlen(title);
-            if (title[len - 1] == '\n') title[len - 1] = '\0';
-
-            fprintf(fd, "=== Jogo: %s ===\n", title);
-            for (int i = 0; i < size; i++) {
-                int pontos = calculate_point(&players[i]);
-                fprintf(fd, "Jogador %d: %d pontos\n", i + 1, pontos);
-            }
-            fprintf(fd, "\n");
-
-            fclose(fd);
-            printf("Jogo salvo com sucesso em 'scoring.txt'.\n");
-            return;
-        }
-
-        case 'n':
-        case 'N':
-            printf("Ok, obrigado por jogar!\n");
-            return;
-
-        default:
-            printf("Opção inválida. Não foi possível salvar o jogo.\n");
-            return;
-    }
+    default:
+      printf("Opção inválida. Não foi possível salvar o jogo.\n");
+      break;
+  }
 }
-
-
+}

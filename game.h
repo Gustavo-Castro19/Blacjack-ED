@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #include "deck.h"
+#define BUFFER 1000
 
 typedef enum{
 LOSE=-1,
