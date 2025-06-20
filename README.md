@@ -43,8 +43,8 @@ blackjack.exe
 * Verifica condições de vitória automaticamente(quem fizer 21 ou o mais próximo possível).
 * Baralho embaralhado a cada jogo.
 * Cálculo dinâmico da pontuação(O Ás vale 11, as cartas com caras{valete, reis, e rainha} valem 10).
-*Caso alguém passe de 21, a pessoa estoura(perde o jogo).
-*Após cada partida a potuação pode ser salva(opção do usuário) em um arquivo scored, as pontuações anteriores podem ser vistas após o termino da partida.
+* Caso alguém passe de 21, a pessoa estoura(perde o jogo).
+* Após cada partida a potuação pode ser salva(opção do usuário) em um arquivo scored, as pontuações anteriores podem ser vistas após o termino da partida.
 
 ## Requisitos
 
